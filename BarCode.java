@@ -83,27 +83,23 @@ public class BarCode
         
         if (bar.charAt(0) != '|') return false;
         
-        int j = 1;
-        boolean check = true;
         StringBuilder checkIt = new StringBuilder();
         
         /* Though this method will not return the zip code itself, it still has to build it in order to check whether the check
         sum portion of the bar code is valid, i.e. whether it is the correct check sum value based on the other digits. */
         
-        while (j < 25 && check == true)
+        for (int j = 1; j < 25; j += 5)
         {
             // Returns false and breaks the loop if the attempt to convert the bars to a digit is unsuccessful.
-            if (codeToDigit(bar.substring(j, j + 5)) == "invalid") {
-                check = false;
-                break;
+            String onePart = bar.substring(j, j + 5);
+
+            if (codeToDigit(onePart) == "invalid") {
+                return false;
             }
             else {
-                checkIt.append(codeToDigit(bar.substring(j, j + 5)));
-                j += 5;
+                checkIt.append(codeToDigit(onePart));
             }
         }
-        
-        if (check == false) return check;
         
         /* Creates variables for the digit in the check sum position in the bar code, and for the *expected* check sum digit based
         on the rest of the values in the bar code. Returns false if their values are not equal to each other. */
@@ -141,7 +137,8 @@ public class BarCode
         for (int i = 0; i < 5; i++) {
             sum += code.charAt(i) - '0';
         }
-        return 10 - (sum % 10);
+        if (sum % 10 == 0) return 0;    // returns 0 in the case that the sum is already an even multiple of 10
+        else return 10 - (sum % 10);
     }
     
     private String encode(String zipCode)
