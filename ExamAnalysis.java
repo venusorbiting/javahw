@@ -18,8 +18,9 @@ class ExamAnalysis
         System.out.print("Please type the correct answers to the exam questions, one right after the other: ");
         //String correctAnswers = keyboard.nextLine();
         String correctAnswers = "ABCEDBACED";            // REMOVE THIS, JUST FOR TESTING
+        int numOfQs = correctAnswers.length();
         
-        System.out.print("What is the name of the file containing each student's responses to the 10 questions? \n");
+        System.out.print("What is the name of the file containing each student's responses to the " + numOfQs + " questions? \n");
         // File f = new File (keyboard.nextLine());
         File f = new File ("exams.dat");                 // REMOVE THIS, JUST FOR TESTING
         Scanner inFile = new Scanner (f);
@@ -30,57 +31,94 @@ class ExamAnalysis
         int correct = 0;
         int incorrect = 0;
         int blank = 0;
+        boolean validInput = true;
         ArrayList<Integer> studentTally = new ArrayList<> ();
+        int [] fullAnswers = new int [numOfQs * 6];
         while (inFile.hasNextLine())
         {
             correct = 0;
             incorrect = 0;
             blank = 0;
+            validInput = true;
             String thisAnswer = inFile.nextLine();
-            if (thisAnswer.length() == 10)
+            //correctQuestions.add(0);
+            //System.out.println("Test, the length of the Qs array is now " + correctQuestions.size());
+            if (thisAnswer.length() == numOfQs)
             {
-                for (int i = 0; i < 10; i++)
+                for (int i = 0; i < numOfQs; i++)
                 {
-                    switch (thisAnswer.charAt(i))
+                    if (validInput)
                     {
-                        case 'A':
-                            if (correctAnswers.charAt(i) == 'A') correct++;
-                            else incorrect++;
-                            continue;
-                        case 'B':
-                            if (correctAnswers.charAt(i) == 'B') correct++;
-                            else incorrect++;
-                            continue;
-                        case 'C':
-                            if (correctAnswers.charAt(i) == 'C') correct++;
-                            else incorrect++;
-                            continue;
-                        case 'D':
-                            if (correctAnswers.charAt(i) == 'D') correct++;
-                            else incorrect++;
-                            continue;
-                        case 'E':
-                            if (correctAnswers.charAt(i) == 'E') correct++;
-                            else incorrect++;
-                            continue;
-                        case ' ':
-                            blank++;
-                            continue;
-                        default:
-                            System.out.println("Not a valid grade");
-                            break;          // ADD A CASE HERE TO IGNORE THE LINE
+                        switch (thisAnswer.charAt(i))
+                        {
+                            case 'A':
+                                fullAnswers[i*6]++;
+                                if (correctAnswers.charAt(i) == 'A')
+                                {
+                                    correct++;
+                                }
+                                else incorrect++;
+                                continue;
+                            case 'B':
+                                fullAnswers[(i * 6)+1]++;
+                                if (correctAnswers.charAt(i) == 'B')
+                                {
+                                    correct++;
+                                }
+                                else incorrect++;
+                                continue;
+                            case 'C':
+                                fullAnswers[(i * 6)+2]++;
+                                if (correctAnswers.charAt(i) == 'C')
+                                {
+                                    correct++;
+                                }
+                                else incorrect++;
+                                continue;
+                            case 'D':
+                                fullAnswers[(i * 6)+3]++;
+                                if (correctAnswers.charAt(i) == 'D')
+                                {
+                                    correct++;
+                                }
+                                else incorrect++;
+                                continue;
+                            case 'E':
+                                fullAnswers[(i * 6)+4]++;
+                                if (correctAnswers.charAt(i) == 'E')
+                                {
+                                    correct++;
+                                }
+                                else incorrect++;
+                                continue;
+                            case ' ':
+                                fullAnswers[(i* 6)+5]++;
+                                blank++;
+                                continue;
+                            default: validInput = false;
+                        }
                     }
                 }
-                lineCount++;
                 
-                System.out.println("Student #" + lineCount + "'s responses: " + thisAnswer);
-                System.out.println(correct + " " + incorrect + " " + blank);
-                studentTally.addAll(Arrays.asList(correct, incorrect, blank));
-                System.out.println("The student tally currently contains: " + studentTally);
+                if (validInput)
+                {
+                    lineCount++;
+                    System.out.println("Student #" + lineCount + "'s responses: " + thisAnswer);
+                    System.out.println(correct + " " + incorrect + " " + blank);
+                    studentTally.addAll(Arrays.asList(correct, incorrect, blank));
+                    System.out.println("The student tally currently contains: " + studentTally);
+                }
             }
         }
         System.out.println("We have reached \"end of file!\"\n");
         System.out.println("Thank you for the data on " + lineCount + " students. Here's the analysis:\n");
+        
+        for (int j = 0; j < numOfQs; j++)
+        {
+            System.out.println("Question " + (j+1) + ": " + fullAnswers[j*6] + " " + fullAnswers[(j*6)+1] + " " + fullAnswers[(j*6)+2] + " " + 
+            fullAnswers[(j*6)+3] + " " + fullAnswers[(j*6)+4] + " " + fullAnswers[(j*6)+5]);
+        }
+        
         
         /* THINGS THAT NEED TO GO HERE:
         // Student   # Correct      Incorrect   Blank
